@@ -1,0 +1,183 @@
+<html>
+
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+
+    <meta>
+    <title>Type Fast</title>
+    <style>
+        body {
+            background-color: #e6f0ff;
+            font-family: 'Vazirmatn', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        h1 {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #cce0ff;
+            color: #004a99;
+            padding: 15px 30px;
+            border-radius: 40px;
+            font-size: 28px;
+            font-weight: bold;
+            box-shadow: 0 0 15px #99bbff;
+            z-index: 999;
+        }
+
+        #word {
+            font-size: 45px;
+            color: #0052cc;
+            margin: 20px 0;
+        }
+
+        #input {
+            padding: 10px;
+            font-size: 20px;
+            border: 2px solid #004a99;
+            border-radius: 10px;
+            outline: none;
+            background-color: #cce0ff;
+            color: #003366;
+        }
+
+        #score,
+        #time {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #003366;
+        }
+
+        #game-over {
+            font-size: 50px;
+            color: #003366;
+            margin-top: 30px;
+            background-color: #cce0ff;
+            padding: 10px 20px;
+            border-radius: 12px;
+            box-shadow: 0 0 10px #99bbff;
+            display: none;
+        }
+
+        #restart-btn {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 18px;
+            background-color: #004a99;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            box-shadow: 0 0 8px #99bbff;
+            transition: 0.2s;
+        }
+
+        #restart-btn:hover {
+            background-color: #003366;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Type and WIN!</h1>
+    <p id="game-over">End Of Game</p>
+    <p id="word">Loading...</p>
+    <input type="text" id="input" autocomplete="off" placeholder="Type the word">
+    <p id="score">Score: 0</p>
+    <p id="time">Time Left: 60s</p>
+    <button id="restart-btn" style="display: none;">Start Over</button>
+
+
+
+    <script>
+        const wordDisplay = document.getElementById("word");
+        const input = document.getElementById("input");
+        const scoreDisplay = document.getElementById("score");
+        const timeDisplay = document.getElementById("time");
+        const gameOver = document.getElementById("game-over");
+        const restartBtn = document.getElementById("restart-btn");
+
+        let score = 0;
+        let time = 60;
+        let currentWord = "";
+
+        async function getRandomWord() {
+            try {
+                const res = await fetch("https://random-word-api.vercel.app/api?words=1");
+                if (!res.ok) throw new Error("Network response was not ok");
+                const data = await res.json();
+                return data[0];
+            } catch (error) {
+                console.error("Fetch error:", error);
+                const fallbackWords = ["apple", "bike", "smile", "show", "sea"];
+                return fallbackWords[Math.floor(Math.random() * fallbackWords.length)];
+            }
+        }
+
+        async function showNewWord() {
+            currentWord = await getRandomWord();
+            wordDisplay.textContent = currentWord;
+        }
+
+        input.addEventListener("input", async () => {
+            if (input.value.trim().toLowerCase() === currentWord.toLowerCase()) {
+                score++;
+                scoreDisplay.textContent = "Score: " + score;
+                input.value = "";
+                await showNewWord();
+            }
+        });
+
+        function updateTimer() {
+            time--;
+            timeDisplay.textContent = "Time Left: " + time;
+
+            if (time === 0) {
+                clearInterval(timer);
+                input.disabled = true;
+
+                wordDisplay.style.display = "none";
+                input.style.display = "none";
+                timeDisplay.style.display = "none";
+
+                scoreDisplay.style.display = "block";
+                scoreDisplay.textContent = "Final Score: " + score;
+
+                gameOver.style.display = "block";
+                gameOver.textContent = "Game Over!";
+                restartBtn.style.display = "block";
+
+                confetti({
+                    particleCount: 1000,
+                    spread: 400,
+                    origin: { y: 0.4 }
+                });
+            }
+
+        }
+
+
+        showNewWord();
+        const timer = setInterval(updateTimer, 1000);
+
+        restartBtn.addEventListener("click", () => {
+            location.reload();
+        });
+
+        window.onload = () => {
+            input.focus();
+        };
+
+
+    </script>
+
+
+</body>
+
+</html>
