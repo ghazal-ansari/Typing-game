@@ -36,9 +36,5 @@
    ```
 2. Open `index.html` in your browser.
 
-### 🧠 Future Ideas
 
-* Difficulty levels
-* Leaderboard system
-* Word definitions popup for learning mode
 
