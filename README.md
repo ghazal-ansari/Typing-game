@@ -34,7 +34,7 @@
    ```bash
    git clone https://github.com/ghazal-ansari/typing-game.git
    ```
-2. Open `index.html` in your browser.
+2. Open `type-fast.html` in your browser.
 
 
 
