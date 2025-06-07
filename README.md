@@ -32,7 +32,7 @@
 1. Clone the repo:
 
    ```bash
-   git clone https://github.com/your-username/typing-game.git
+   git clone https://github.com/ghazal-ansari/typing-game.git
    ```
 2. Open `index.html` in your browser.
 
